@@ -1,5 +1,7 @@
 import time
+import json
 
+from selenium.webdriver import Keys
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -24,8 +26,11 @@ class Santehnika_page(Base):
     price_500_900 = "// *[ @ id = 'filter-price'] / div[2] / div[1] / a[3]"
     value_min_width = "// *[ @ id = 'filter-width'] / div[2] / div[3] / span / table / tbody / tr / td / div[6] / span"
     value_input_min_width = "// *[ @ id = 'arrFilter_80_MIN']"
-    input_max_height = "'// *[ @ id = 'arrFilter_82_MAX']"
+    input_max_height = "// input[@id= 'arrFilter_82_MAX']"
     button_find = "//*[@id='set_filter']"
+    search_input = '//input[@class="b-header__search_form-text"]'
+
+
 
 
     # gettings
@@ -56,7 +61,7 @@ class Santehnika_page(Base):
         return WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.XPATH, self.check_button_produced_belux)))
 
     def get_input_max_height(self):
-        return WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.XPATH, self.get_input_max_height)))
+        return WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.XPATH, self.input_max_height)))
 
     def get_button_find(self):
         return WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.XPATH, self.button_find)))
@@ -64,6 +69,9 @@ class Santehnika_page(Base):
     def get_button_detailed_n(self, i):
         button_detailed_i = "/html/body/main/section/div/div/div[2]/div[2]/div[" +str(i) + "]/a/span"
         return WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.XPATH, button_detailed_i)))
+
+    def get_search_input(self):
+        return WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.XPATH, self.search_input)))
 
     # actions
 
@@ -101,6 +109,11 @@ class Santehnika_page(Base):
         self.get_button_detailed_n(i).click()
         print(f'click button detailed product {i}')
 
+    def fill_search_input(self, find_word):
+        self.get_search_input().send_keys(find_word)
+        self.get_search_input().send_keys(Keys.RETURN)
+
+
     #Methods
 
     def sort_product(self):
@@ -109,7 +122,7 @@ class Santehnika_page(Base):
         self.slider(self.get_slider_width_min(), 100)
         self.assert_value(self.get_value_min_width(), self.get_value_input_min_width().text) # проверяем соотвествии значения в ячейке input и на слайдоре
         self.click_check_button_produced_belux()
-        # self.fill_input_max_height(50)
+        self.fill_input_max_height(90)
         self.click_button_find()
 
     def add_product_n(self, i):
